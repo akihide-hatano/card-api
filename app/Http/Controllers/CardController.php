@@ -80,4 +80,16 @@ class CardController extends Controller
 
         return response()->noContent();
     }
+
+    // POST /cards/{card}/archive → 202（受け付け）
+    public function archive(Card $card)
+    {
+        ArchiveCard::dispatch($card);
+        Log::info('cards.archive.accepted', ['id' => $card->id]);
+
+        return response()->json([
+            'message' => 'accepted',
+            'card_id' => $card->id,
+        ], 202);
+    }
 }
