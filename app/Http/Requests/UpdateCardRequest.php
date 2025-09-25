@@ -22,7 +22,10 @@ class UpdateCardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title'       => 'sometimes|required|string|max:100',
+            'description' => 'sometimes|nullable|string',
+            'status'      => 'sometimes|in:open,in_progress,done,archived',
+            'due_date'    => 'sometimes|nullable|date',
         ];
     }
 }
