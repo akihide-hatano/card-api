@@ -10,6 +10,8 @@ use App\Http\Requests\StoreCardRequest;
 use App\Http\Requests\UpdateCardRequest;
 use Illuminate\Support\Facades\Log;
 
+use function PHPUnit\Framework\returnSelf;
+
 class CardController extends Controller
 {
     /**
@@ -35,9 +37,15 @@ class CardController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCardRequest $request)
     {
-        //
+        $card = Card::create($request->validated());
+        Log::info('cards.store',['id'=>$card->id]);
+
+        return (new CardResource($card))
+            ->response()
+            ->setStatusCode(201)
+            ->header('Location',route('cards.show',$card));
     }
 
     /**
@@ -45,22 +53,31 @@ class CardController extends Controller
      */
     public function show(Card $card)
     {
-        //
+        return new CardResource($card);
     }
 
     /**
      * Update the specified resource in storage.
      */
+    // PATCH /cards/{card} → 200（本体返す） or 204（本体なし）
     public function update(Request $request, Card $card)
     {
-        //
+        $card->update($request->validate());
+        Log::info('cards.update',['id'=>$card->id]);
+
+        return new CardResource($card);
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
+    // DELETE /cards/{card} → 204
     public function destroy(Card $card)
     {
-        //
+        $card->delete();
+        Log::info('cards.destroy', ['id' => $card->id]);
+
+        return response()->noContent();
     }
 }
