@@ -20,4 +20,7 @@ Route::middleware('auth')->group(function () {
 
 Route::apiResource('cards', CardController::class);
 
+// POST /cards/{card}/archive が CardController の archive メソッドを呼び出すように定義
+Route::post('cards/{card}/archive',[CardController::class,'archive'])->name('cards.archive');
+
 require __DIR__.'/auth.php';
