@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\CardResource;
 use App\Http\Requests\StoreCardRequest;
 use App\Http\Requests\UpdateCardRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 use function PHPUnit\Framework\returnSelf;
