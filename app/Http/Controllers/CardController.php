@@ -15,9 +15,21 @@ class CardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    //Get /cards/->200
+    public function index(Request $request)
     {
-        //
+        Log::debug('cards.index',['q'=>$request->query('q')]);
+        $q = $request->query('q');
+
+        $query = Card::query()->latest('id');
+        if($q){
+                $query->where(function($w) use ($q) {
+                $w->where('title','like',"%$q%")
+                    ->orWhere('description','like',"%$q%");
+        });
+    }
+        return CardResource::collection(
+            $query->paginate(10)->appends($request->only('q')));
     }
 
     /**
