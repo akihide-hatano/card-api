@@ -82,14 +82,15 @@ class CardController extends Controller
     }
 
     // POST /cards/{card}/archive → 202（受け付け）
-    public function archive(Card $card)
+    public function archive($id)
     {
-        ArchiveCard::dispatch($card);
-        Log::info('cards.archive.accepted', ['id' => $card->id]);
+        $card = Card::find($id);
+        if (!$card) {
+            return response()->json(['error' => ['message' => 'Not Found']], 404);
+        }
+        $card->update(['status' => 'archived', 'archived_at' => now()]);
+        Log::info('card.archived', ['id' => $card->id]);
 
-        return response()->json([
-            'message' => 'accepted',
-            'card_id' => $card->id,
-        ], 202);
+        return response()->json(['data' => $card->api()], 200);
     }
 }
