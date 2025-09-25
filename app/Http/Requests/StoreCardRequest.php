@@ -22,7 +22,10 @@ class StoreCardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' =>  'required|string|max:100',
+            'description' => 'nullable|string',
+            'status'      => 'nullable|in:open,in_progress,done,archived',
+            'due_date'    => 'nullable|date',
         ];
     }
 }
