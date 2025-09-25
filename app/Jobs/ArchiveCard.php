@@ -2,17 +2,19 @@
 
 namespace App\Jobs;
 
+use App\Models\Card;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
 
 class ArchiveCard implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable,Queueable;
 
     /**
      * Create a new job instance.
      */
-    public function __construct()
+    public function __construct(public Card $card)
     {
         //
     }
@@ -22,6 +24,9 @@ class ArchiveCard implements ShouldQueue
      */
     public function handle(): void
     {
-        //
+        $this->card->update([
+            'status'      => 'archived',
+            'archived_at' => now(),
+        ]);
     }
 }
