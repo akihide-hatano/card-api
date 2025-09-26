@@ -48,6 +48,18 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
+    phpmyadmin:
+        image: phpmyadmin:5
+        depends_on:
+        - mysql
+        ports:
+        - "8081:80"
+        environment:
+            PMA_HOST: mysql
+            UPLOAD_LIMIT: 64M
+            MYSQL_EXTRA_OPTIONS: '${MYSQL_EXTRA_OPTIONS}'
+        networks:
+        - sail
 networks:
     sail:
         driver: bridge
