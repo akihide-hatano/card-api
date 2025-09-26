@@ -23,16 +23,27 @@ class CardController extends Controller
     {
         Log::debug('cards.index',['q'=>$request->query('q')]);
         $q = $request->query('q');
-
         $query = Card::query()->latest('id');
+
         if($q){
                 $query->where(function($w) use ($q) {
                 $w->where('title','like',"%$q%")
                     ->orWhere('description','like',"%$q%");
         });
     }
-        return CardResource::collection(
-            $query->paginate(10)->appends($request->only('q')));
+
+    // ここで初めて total 等が計算される
+    $paginator = $query->paginate(10)->appends(['q' => $q]);
+
+        // ページネータの要点だけログに出す
+    Log::debug('paginate snapshot', [
+        'total'        => $paginator->total(),
+        'per_page'     => $paginator->perPage(),
+        'current_page' => $paginator->currentPage(),
+        'count'        => $paginator->count(),
+    ]);
+
+        return CardResource::collection($paginator);
     }
 
     /**
