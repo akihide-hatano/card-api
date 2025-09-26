@@ -40,4 +40,15 @@ class CardApiTest extends TestCase
         ->assertSee('React API Frontend');
 }
 
+    public function test_store_returns_201_with_location_and_body(){
+        $payload = ['title' => 'New Card', 'description' => 'first'];
+        $res = $this->postJson('/api/v1/cards', $payload);
+
+        $res->assertStatus(201)
+            ->assertHeader('Location')
+            ->assertJsonPath('data.title','New Card');
+
+         $this->assertDatabaseHas('cards', ['title' => 'New Card']);
+    }
+
 }
