@@ -15,8 +15,10 @@ class CardApiTest extends TestCase
     /** 一覧: 200 & ページネーションJSON */
     public function test_index_returns_paginated_cards()
     {
-        Card::factory()->count(3)->create();
-
+        Card::create(['title' => 'A']);
+        Card::create(['title' => 'B']);
+        Card::create(['title' => 'C']);
+        
         $res = $this->getJson('/api/v1/cards');
 
         $res->assertStatus(200)
