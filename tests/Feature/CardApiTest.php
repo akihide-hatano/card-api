@@ -40,15 +40,30 @@ class CardApiTest extends TestCase
         ->assertSee('React API Frontend');
 }
 
-    public function test_store_returns_201_with_location_and_body(){
-        $payload = ['title' => 'New Card', 'description' => 'first'];
-        $res = $this->postJson('/api/v1/cards', $payload);
-
-        $res->assertStatus(201)
-            ->assertHeader('Location')
-            ->assertJsonPath('data.title','New Card');
-
-         $this->assertDatabaseHas('cards', ['title' => 'New Card']);
+    public function test_show_returns_404_when_not_found(){
+        
+        $this->getJson('/api/v1/cards/999999')->assertStatus(404);
     }
+
+public function test_store_creates_card_and_returns_201_with_location()
+{
+    $payload = ['title' => 'New card', 'description' => 'from test'];
+
+    $res = $this->postJson('/api/v1/cards', $payload);
+
+    $res->assertStatus(201)
+        ->assertHeader('Location')
+        ->assertJsonPath('data.title', 'New card');
+
+    // 作成されたIDをレスポンスから取る
+    $id = $res->json('data.id');
+
+    // DBに本当に入ったか（最低限見るカラムだけでOK）
+    $this->assertDatabaseHas('cards', [
+        'id'    => $id,
+        'title' => 'New card',
+        'status'=> 'open', // デフォルト値も確認できるとGood
+    ]);
+}
 
 }
