@@ -66,7 +66,7 @@ class CardController extends Controller
         $card->update($request->validate());
         Log::info('cards.update',['id'=>$card->id]);
 
-        return new CardResource($card);
+        return new CardResource($card->fresh());
 
     }
 
@@ -89,7 +89,6 @@ class CardController extends Controller
             'status'      => 'archived',
             'archived_at' => now(),
         ]);
-
-        return response()->json(['data' => $card->fresh()], 200);
+         return new CardResource($card->refresh()); // 200
     }
 }
