@@ -55,6 +55,15 @@ class CardApiTest extends TestCase
             ->assertJsonValidationErrors(['title']);
     }
 
+    //**作成： 422 titleが空 */
+    public function test_update_return_422_when_title_empty(){
+        //descriptionにtitleを入れないようにする
+        $res = $this ->postJson('/api/v1/cards', ['description' => '']);
+
+        //validationのerrorで引っかかる
+        $res->assertStatus(422)
+            ->assertJsonValidationErrors(['title']);
+    }
 
     public function test_store_creates_card_and_returns_201_with_location()
     {
@@ -117,5 +126,9 @@ class CardApiTest extends TestCase
             'id' => $card->id,
             'status' => 'archived',
         ]);
+    }
+
+    public function test_archive_return_404_when_not_found(){
+        $this->postJson('/api/v1/cards/999999/archive')->assertStatus(404);
     }
 }
