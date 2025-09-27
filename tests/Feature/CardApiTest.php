@@ -26,19 +26,19 @@ class CardApiTest extends TestCase
     }
 
     public function test_index_can_filter_by_q()
-{
-    Card::create(['title' => 'Laravel API Guide']);
-    Card::create(['title' => 'React API Frontend']);
-    Card::create(['title' => 'API Testing with PHPUnit']);
+    {
+        Card::create(['title' => 'Laravel API Guide']);
+        Card::create(['title' => 'React API Frontend']);
+        Card::create(['title' => 'API Testing with PHPUnit']);
 
-    $res = $this->getJson('/api/v1/cards?q=React');
+        $res = $this->getJson('/api/v1/cards?q=React');
 
-    $res->assertStatus(200)
-        ->assertJsonPath('meta.total', 1)
-        ->assertDontSee('Laravel API Guide')
-        ->assertDontSee('API Testing with PHPUnit')
-        ->assertSee('React API Frontend');
-}
+        $res->assertStatus(200)
+            ->assertJsonPath('meta.total', 1)
+            ->assertDontSee('Laravel API Guide')
+            ->assertDontSee('API Testing with PHPUnit')
+            ->assertSee('React API Frontend');
+    }
 
     /** 詳細: 404（存在しないID） */
     public function test_show_returns_404_when_not_found(){
@@ -77,13 +77,27 @@ class CardApiTest extends TestCase
         ]);
     }
 
-    // public function test_destory_return_204_and_row_remove(){
-    //     //要素を作成
-    //     $card = Card::
+    public function test_destory_returns_204_ando_removes_row(){
+        //ダミーデータを明示的に作成
+        $card = Card::create([
+            'title' => 'Temp',
+            'status' => 'open',
+            'archived_at' => null,
+        ]);
+        //実行
+        $res = $this->deleteJson("/api/v1/cards/{$card->id}");
 
-    //     $this->deleteJson("api/v1/cards/{$card->id}");
-    //     $this->assertDatabaseMissing('cards',['id'=>$card->id]);
-    // }
+        // --- デバッグ表示したいとき（必要に応じてコメントアウトを外す） ---
+        // $res->dumpHeaders();                 // ヘッダを出力
+        //  dd($res->status(), $res->content()); // ステータスと本文を停止表示（204なので本文は空）
+        // ------------------------------------
+
+        // 検証：HTTP 204（No Content）
+        $res->assertNoContent(); // = assertStatus(204)
+
+        // 検証：DBから消えている
+        $this->assertDatabaseMissing('cards', ['id' => $card->id]);
+    }
 
     /** アーカイブ: 200（status/archived_at が更新） */
     public function test_archive_sets_status_and_returns_200()
