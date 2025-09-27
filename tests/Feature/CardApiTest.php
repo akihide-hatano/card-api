@@ -55,16 +55,6 @@ class CardApiTest extends TestCase
             ->assertJsonValidationErrors(['title']);
     }
 
-    //**作成： 422 titleが空 */
-    public function test_update_return_422_when_title_empty(){
-        //descriptionにtitleを入れないようにする
-        $res = $this ->postJson('/api/v1/cards', ['description' => '']);
-
-        //validationのerrorで引っかかる
-        $res->assertStatus(422)
-            ->assertJsonValidationErrors(['title']);
-    }
-
     public function test_store_creates_card_and_returns_201_with_location()
     {
         $payload = ['title' => 'New card', 'description' => 'from test'];
