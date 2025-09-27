@@ -108,7 +108,6 @@ class CardApiTest extends TestCase
             'archived_at' => null,
         ]);
 
-
         $res = $this->postJson("/api/v1/cards/{$card->id}/archive");
         $res->assertStatus(200)
             ->assertJsonPath('data.status', 'archived')
