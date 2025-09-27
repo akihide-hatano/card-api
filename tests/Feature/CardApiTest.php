@@ -77,18 +77,23 @@ class CardApiTest extends TestCase
         ]);
     }
 
-    public function test_destory_return_204_and_row_remove(){
-        //要素を作成
-        $card = Card::
+    // public function test_destory_return_204_and_row_remove(){
+    //     //要素を作成
+    //     $card = Card::
 
-        $this->deleteJson("api/v1/cards/{$card->id}");
-        $this->assertDatabaseMissing('cards',['id'=>$card->id]);
-    }
+    //     $this->deleteJson("api/v1/cards/{$card->id}");
+    //     $this->assertDatabaseMissing('cards',['id'=>$card->id]);
+    // }
 
     /** アーカイブ: 200（status/archived_at が更新） */
     public function test_archive_sets_status_and_returns_200()
     {
-        $card = Card::factory()->create(['status' => 'open', 'archived_at' => null]);
+            $card = Card::create([
+            'title' => 'Temp',
+            'status' => 'open',
+            'archived_at' => null,
+        ]);
+
 
         $res = $this->postJson("/api/v1/cards/{$card->id}/archive");
         $res->assertStatus(200)
@@ -100,21 +105,4 @@ class CardApiTest extends TestCase
             'status' => 'archived',
         ]);
     }
-
-    /** アーカイブ: 200（status/archived_at が更新） */
-    public function test_archive_sets_status_and_returns_200()
-    {
-        $card = Card::factory()->create(['status' => 'open', 'archived_at' => null]);
-
-        $res = $this->postJson("/api/v1/cards/{$card->id}/archive");
-        $res->assertStatus(200)
-            ->assertJsonPath('data.status', 'archived')
-            ->assertJsonPath('data.id', $card->id);
-
-        $this->assertDatabaseHas('cards', [
-            'id' => $card->id,
-            'status' => 'archived',
-        ]);
-    }
-
 }
